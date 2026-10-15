@@ -42,15 +42,24 @@ export default function AddBookForm({ onAdd }: AddBookFormProps) {
     setSubmitFailed(false);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
+    // Submit what the fields actually show. Autofill, password managers and scripted
+    // fills can change an input's DOM value without React seeing an input event, which
+    // would otherwise leave state stale and make the button silently do nothing.
+    const data = new FormData(e.currentTarget);
+    const current: Record<Field, string> = {
+      title: String(data.get('title') ?? values.title),
+      author: String(data.get('author') ?? values.author),
+    };
+    if (current.title !== values.title || current.author !== values.author) setValues(current);
     setSubmitAttempted(true);
     setSubmitFailed(false);
-    if (errors.title || errors.author) return;
+    if (validateField('title', current.title) || validateField('author', current.author)) return;
     setSubmitting(true);
     try {
-      await onAdd({ title: values.title.trim(), author: values.author.trim() });
+      await onAdd({ title: current.title.trim(), author: current.author.trim() });
       setValues({ title: '', author: '' });
       setTouched({ title: false, author: false });
       setSubmitAttempted(false);

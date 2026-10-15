@@ -67,6 +67,21 @@ describe('AddBookForm', () => {
     expect(screen.getByRole('alert').textContent).toMatch('nicht hinzugefügt');
   });
 
+  it('submits values written into the fields without input events (autofill)', async () => {
+    const user = userEvent.setup();
+    const onAdd = vi.fn().mockResolvedValue(undefined);
+    render(<AddBookForm onAdd={onAdd} />);
+    await user.click(button());
+    expect(screen.getByText('Bitte einen Titel eingeben.')).toBeTruthy();
+    // Autofill-style: the DOM value changes, React's onChange never fires.
+    input('Titel').value = 'Momo';
+    input('Autor').value = 'Michael Ende';
+    await user.click(button());
+    expect(onAdd).toHaveBeenCalledWith({ title: 'Momo', author: 'Michael Ende' });
+    await waitFor(() => expect(input('Titel').value).toBe(''));
+    expect(screen.queryByText('Bitte einen Titel eingeben.')).toBeNull();
+  });
+
   it('clears the failure message once the user edits a field', async () => {
     const user = userEvent.setup();
     const onAdd = vi.fn().mockRejectedValue(new Error('boom'));
