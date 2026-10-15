@@ -25,6 +25,9 @@ export default function AddBookForm({ onAdd }: AddBookFormProps) {
   const [touched, setTouched] = useState<Record<Field, boolean>>({ title: false, author: false });
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  // Shown when onAdd rejects, so a failed add is visible in the form itself even when
+  // App's error banner already displays the same text (e.g. after a failed initial load).
+  const [submitFailed, setSubmitFailed] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
 
   const errors: Record<Field, string | null> = {
@@ -36,12 +39,14 @@ export default function AddBookForm({ onAdd }: AddBookFormProps) {
   const change = (f: Field, v: string) => {
     setValues((prev) => ({ ...prev, [f]: v }));
     setTouched((prev) => ({ ...prev, [f]: true }));
+    setSubmitFailed(false);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (submitting) return;
     setSubmitAttempted(true);
+    setSubmitFailed(false);
     if (errors.title || errors.author) return;
     setSubmitting(true);
     try {
@@ -53,8 +58,9 @@ export default function AddBookForm({ onAdd }: AddBookFormProps) {
       // Inputs are disabled while submitting; focus once they are re-enabled.
       setTimeout(() => titleRef.current?.focus(), 0);
     } catch {
-      // Keep the input; App shows the error banner.
+      // Keep the input; App shows the error details in its banner.
       setSubmitting(false);
+      setSubmitFailed(true);
     }
   };
 
@@ -100,6 +106,11 @@ export default function AddBookForm({ onAdd }: AddBookFormProps) {
           Hinzufügen
         </button>
       </form>
+      {submitFailed && (
+        <p className="add-book-form__error add-book-form__status" role="alert">
+          Das Buch konnte nicht hinzugefügt werden. Deine Eingaben bleiben erhalten.
+        </p>
+      )}
     </section>
   );
 }

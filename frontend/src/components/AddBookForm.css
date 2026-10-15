@@ -26,6 +26,9 @@
   font-size: 13px;
   color: var(--color-danger);
 }
+.add-book-form__status {
+  margin-top: var(--space-2);
+}
 .add-book-form__submit {
   width: 100%;
 }

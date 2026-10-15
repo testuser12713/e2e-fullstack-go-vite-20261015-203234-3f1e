@@ -64,5 +64,18 @@ describe('AddBookForm', () => {
     await waitFor(() => expect(button().disabled).toBe(false));
     expect(input('Titel').value).toBe('Momo');
     expect(input('Autor').value).toBe('Michael Ende');
+    expect(screen.getByRole('alert').textContent).toMatch('nicht hinzugefügt');
+  });
+
+  it('clears the failure message once the user edits a field', async () => {
+    const user = userEvent.setup();
+    const onAdd = vi.fn().mockRejectedValue(new Error('boom'));
+    render(<AddBookForm onAdd={onAdd} />);
+    await user.type(input('Titel'), 'Momo');
+    await user.type(input('Autor'), 'Michael Ende');
+    await user.click(button());
+    await waitFor(() => expect(screen.queryByRole('alert')).not.toBeNull());
+    await user.type(input('Titel'), '!');
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });
