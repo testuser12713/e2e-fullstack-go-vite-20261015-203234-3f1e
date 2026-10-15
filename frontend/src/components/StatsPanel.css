@@ -1,0 +1,37 @@
+.stats-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  color: var(--color-fg);
+  font-variant-numeric: tabular-nums;
+}
+.stats-panel__heading { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.25; }
+.stats-panel__placeholder { margin: 16px 0 0; color: var(--color-muted); font-size: 14px; }
+.stats-panel__section { margin: 20px 0 0; padding: 20px 0 0; border-top: 1px solid var(--color-border); }
+.stats-panel__heading + .stats-panel__section { border-top: 0; padding-top: 0; margin-top: 16px; }
+.stats-panel__label { font-size: 13px; color: var(--color-muted); }
+.stats-panel__hero { font-size: 40px; font-weight: 700; line-height: 1.25; }
+.stats-panel__avg { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.stats-panel__avg-value { font-size: 18px; font-weight: 600; display: inline-flex; gap: 4px; align-items: center; }
+.stats-panel__star { color: var(--color-star); }
+.month-bars { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; }
+.month-bars__col { display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-width: 0; }
+.month-bars__track { height: 96px; display: flex; align-items: flex-end; }
+.month-bars__bar { width: 100%; background: var(--color-accent); border-radius: 3px 3px 0 0; }
+.month-bars__bar--zero { height: 2px; background: var(--color-border); }
+.month-bars__label { font-size: 11px; color: var(--color-muted); text-align: center; }
+.month-bars__label--current { font-weight: 600; color: var(--color-fg); }
+.month-bars__short { display: none; }
+@media (max-width: 479px) {
+  .month-bars__long { display: none; }
+  .month-bars__short { display: inline; }
+}
+.stats-panel__status { list-style: none; margin-bottom: 0; padding-left: 0; display: flex; flex-direction: column; gap: 8px; }
+.stats-panel__status-row { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.stats-panel__status-label { flex: 1; }
+.stats-panel__dot { width: 8px; height: 8px; border-radius: 999px; }
+.stats-panel__dot--planned { background: var(--color-status_planned); }
+.stats-panel__dot--reading { background: var(--color-status_reading); }
+.stats-panel__dot--read { background: var(--color-status_read); }
+@media (max-width: 639px) { .stats-panel { padding: 16px; } }
