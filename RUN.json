@@ -6,15 +6,82 @@
       "dir": "backend",
       "stack": "go",
       "kind": "server",
-      "build": [["go", "build", "./..."]],
-      "test": [["go", "test", "./..."]],
-      "start": ["go", "run", "."],
+      "build": [
+        [
+          "go",
+          "build",
+          "./..."
+        ]
+      ],
+      "test": [
+        [
+          "go",
+          "test",
+          "./..."
+        ]
+      ],
+      "start": [
+        "go",
+        "run",
+        "."
+      ],
       "port": 8080,
       "port_env": "PORT",
-      "health": {"path": "/api/health", "expect_status": [200]},
+      "health": {
+        "path": "/api/health",
+        "expect_status": [
+          200
+        ]
+      },
       "env": {
-        "DATA_FILE": {"dev": "./data/books.json"},
-        "CORS_ORIGIN": {"dev": "${service:web.origin}"}
+        "DATA_FILE": {
+          "dev": "./data/books.json"
+        },
+        "CORS_ORIGIN": {
+          "dev": "${service:web.origin}"
+        }
+      }
+    },
+    {
+      "name": "web",
+      "dir": "frontend",
+      "stack": "web-vite",
+      "kind": "static",
+      "install": [
+        [
+          "npm",
+          "ci"
+        ]
+      ],
+      "build": [
+        [
+          "npm",
+          "run",
+          "build"
+        ]
+      ],
+      "test": [
+        [
+          "npm",
+          "test"
+        ]
+      ],
+      "serve_dir": "dist",
+      "start": [
+        "npx",
+        "vite",
+        "preview",
+        "--host",
+        "127.0.0.1",
+        "--strictPort",
+        "--port",
+        "${PORT}"
+      ],
+      "port": 4173,
+      "env": {
+        "VITE_API_BASE_URL": {
+          "dev": "${service:api.origin}"
+        }
       }
     }
   ]
