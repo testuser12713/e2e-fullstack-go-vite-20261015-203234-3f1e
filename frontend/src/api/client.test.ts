@@ -10,9 +10,21 @@ const fetchMock = vi.fn();
 beforeEach(() => {
   fetchMock.mockReset();
   vi.stubGlobal('fetch', fetchMock);
+  // Isolate from the ambient VITE_API_BASE_URL (RUN.json injects an absolute origin).
+  vi.stubEnv('VITE_API_BASE_URL', '');
 });
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
+
+describe('api base url', () => {
+  it('prefixes the configured base and strips trailing slashes', async () => {
+    vi.stubEnv('VITE_API_BASE_URL', 'http://127.0.0.1:8080/');
+    fetchMock.mockResolvedValue(jsonResponse(200, []));
+    await listBooks();
+    expect(fetchMock.mock.calls[0][0]).toBe('http://127.0.0.1:8080/api/books');
+  });
 });
 
 describe('api client', () => {
