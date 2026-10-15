@@ -29,6 +29,13 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const requestId = useRef(0);
+  // Bumped on reset so FilterBar remounts and its internal search input clears.
+  const [filterKey, setFilterKey] = useState(0);
+  const onResetFilter = useCallback(() => {
+    setStatus('all');
+    setQuery('');
+    setFilterKey((k) => k + 1);
+  }, []);
 
   const refresh = useCallback(async () => {
     const id = ++requestId.current;
@@ -90,7 +97,7 @@ export default function App() {
         <main className="app-main">
           <AddBookForm onAdd={onAdd} />
           <div className="toolbar">
-            <FilterBar status={status} onStatusChange={setStatus} onQueryChange={setQuery} />
+            <FilterBar key={filterKey} status={status} onStatusChange={setStatus} onQueryChange={setQuery} />
           </div>
           {error && (
             <div className="error-banner" role="alert">
@@ -120,7 +127,13 @@ export default function App() {
                 <div className="skeleton-row" />
               </div>
             ) : (
-              <BookList books={books} hasActiveFilter={hasActiveFilter} onUpdate={onUpdate} onDelete={onDelete} />
+              <BookList
+                books={books}
+                hasActiveFilter={hasActiveFilter}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                onResetFilter={onResetFilter}
+              />
             )}
           </section>
         </main>
